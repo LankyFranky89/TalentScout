@@ -13,6 +13,8 @@ A World of Warcraft (WoW Forever) addon that previews talent builds right in you
 - Follows the arrows: required talents are planned at full rank before the talent they unlock
 - Off-preset warning: talents with more points than the preset get a red outline, plus a chat note
 - Record your own presets: click talents in order (rows and arrows are enforced like the real game), name it, pick a role, save
+- Talent tooltips show what a talent gives you, worked out from your own stats (e.g. "Next point: +4 Strength · At 5/5: +21 Strength"), plus cooldown before/after
+- Hover a preset in the right-click menu for what the whole preset gives you (`/tsc summary`)
 - Reminder in chat when you level up with unspent points
 
 Presets are written for WoW Forever's own talent trees. Paladin is done; other classes still use classic-style presets and will be updated.
@@ -27,6 +29,7 @@ Download the latest release zip, put the `TalentScout` folder in `Interface\AddO
 | `/tsc list` | List presets for your class |
 | `/tsc role dps` / `tank` / `heal` | Preview the first preset for that role |
 | `/tsc record` | Record your own preset |
+| `/tsc summary` | What the current preset gives you |
 | `/tsc hide` | Preview on/off |
 | `/tsc remind` | Level-up reminders on/off |
 | `/tsc debug` | Copyable report for bug reports |

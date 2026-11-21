@@ -169,6 +169,179 @@ local function Analyse()
   return targets, nextName, nextTarget
 end
 
+
+-- ---------- What a talent gives YOU (exact, from your current stats) ----------
+local STAT_INDEX = { strength = 1, agility = 2, stamina = 3, intellect = 4, spirit = 5 }
+local descCache = {}
+local function RankDesc(t, rank)
+  if not (t.entryID and rank and rank > 0 and C_Traits.GetTraitDescription) then return nil end
+  local key = t.entryID .. ":" .. rank
+  if descCache[key] == nil then
+    local ok, d = pcall(C_Traits.GetTraitDescription, t.entryID, rank)
+    descCache[key] = (ok and d) or false
+  end
+  return descCache[key] or nil
+end
+
+-- Which kind of talent is this, and what number does a rank give?
+local function Classify(desc)
+  if not desc then return end
+  local d = desc:lower()
+  local stat, v = d:match("increases your total (%a+) by ([%d%.]+)%%")
+  if not stat then stat, v = d:match("increases your (%a+) by ([%d%.]+)%%") end
+  if stat and STAT_INDEX[stat] then return "stat:" .. stat, tonumber(v) end
+  v = d:match("armor value from items by ([%d%.]+)%%"); if v then return "itemarmor", tonumber(v) end
+  v = d:match("critical strike with all spells and attacks by ([%d%.]+)%%"); if v then return "crit", tonumber(v) end
+  v = d:match("your chance to hit by ([%d%.]+)%%"); if v then return "hit", tonumber(v) end
+  v = d:match("parry chance by ([%d%.]+)%%"); if v then return "parry", tonumber(v) end
+  v = d:match("dodge chance by ([%d%.]+)%%"); if v then return "dodge", tonumber(v) end
+  v = d:match("defense skill by (%d+)"); if v then return "defense", tonumber(v) end
+  local spell, sec = desc:match("cooldown of your (.-) spell by (%d+) sec")
+  if not spell then spell, sec = desc:match("cooldown of your (.-) ability by (%d+) sec") end
+  if spell then return "cd:" .. spell, tonumber(sec) end
+end
+
+local function ValueAt(t, rank)
+  if not rank or rank <= 0 then return 0 end
+  local kind, v = Classify(RankDesc(t, rank))
+  return v or 0, kind
+end
+
+local function ItemArmor()
+  local total = 0
+  for slot = 1, 19 do
+    local data = C_TooltipInfo and C_TooltipInfo.GetInventoryItem and C_TooltipInfo.GetInventoryItem("player", slot)
+    for _, line in ipairs((data and data.lines) or {}) do
+      local txt = line.leftText
+      if txt and issecretvalue and issecretvalue(txt) then txt = nil end
+      local ok, n = pcall(function() return txt and txt:match("^(%d+) Armor$") end)
+      n = ok and n or nil
+      if n then total = total + tonumber(n); break end
+    end
+  end
+  return total
+end
+
+local function Round(x) return math.floor(x + 0.5) end
+
+-- WoW Forever can hand addons "secret" numbers (no maths allowed). Treat those as unknown.
+local function Plain(v)
+  if v == nil then return nil end
+  if issecretvalue then local ok, sec = pcall(issecretvalue, v); if not ok or sec then return nil end end
+  if canaccessvalue then local ok, can = pcall(canaccessvalue, v); if not ok or not can then return nil end end
+  if type(v) ~= "number" then return nil end
+  return v
+end
+
+-- gain(kind, pctOrValue) relative to having 0 ranks, using the talent's current rank to back out its bonus
+local function Gainer(t)
+  local kind = select(2, ValueAt(t, t.max or 1))
+  if not kind then return end
+  local now = ValueAt(t, t.rank)
+  if kind:find("^stat:") then
+    local idx = STAT_INDEX[kind:sub(6)]
+    local _, total = UnitStat("player", idx)
+    total = Plain(total)
+    if not total then return end
+    local base = total / (1 + now / 100)
+    local label = kind:sub(6):gsub("^%l", string.upper)
+    return kind, function(v) return Round(base * v / 100) end, function(n) return ("+%d %s"):format(n, label) end
+  elseif kind == "itemarmor" then
+    local items = ItemArmor()
+    return kind, function(v) return Round(items * v / 100) end, function(n) return ("+%d armor"):format(n) end
+  elseif kind == "defense" then
+    return kind, function(v) return v end, function(n) return ("+%d defense"):format(n) end
+  elseif kind == "crit" or kind == "hit" or kind == "parry" or kind == "dodge" then
+    return kind, function(v) return v end, function(n) return ("+%s%% %s"):format(n, kind) end
+  elseif kind:find("^cd:") then
+    return kind, function(v) return v end, function(n) return ("-%ds cooldown"):format(n) end
+  end
+end
+
+local function CurrentOf(kind)
+  local ok, v = pcall(function()
+    if kind == "crit" and GetCritChance then return Plain(GetCritChance()) end
+    if kind == "parry" and GetParryChance then return Plain(GetParryChance()) end
+    if kind == "dodge" and GetDodgeChance then return Plain(GetDodgeChance()) end
+    if kind == "defense" and UnitDefense then
+      local b, m = UnitDefense("player"); b, m = Plain(b), Plain(m) or 0
+      return b and (b + m)
+    end
+  end)
+  return ok and v or nil
+end
+
+-- Lines for a tooltip: next point and full rank
+local function EffectLines(t)
+  if not t then return end
+  local kind, gain, fmt = Gainer(t)
+  if not kind then return end
+  local r, max = t.rank or 0, t.max or 1
+  local lines = {}
+  local function withNow(delta)
+    local cur = CurrentOf(kind)
+    if not cur then return "" end
+    if kind == "defense" then return (" (%d -> %d)"):format(cur, cur + delta) end
+    return (" (%.1f%% -> %.1f%%)"):format(cur, cur + delta)
+  end
+  if kind:find("^cd:") then
+    local spell = kind:sub(4)
+    local info = C_Spell and C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(spell)
+    local baseMs = info and GetSpellBaseCooldown and Plain(GetSpellBaseCooldown(info.spellID))
+    if baseMs and baseMs > 0 then
+      local base = baseMs / 1000
+      local full = ValueAt(t, max)
+      lines[#lines + 1] = ("%s cooldown: %ds -> %ds at %d/%d"):format(spell, base, base - full, max, max)
+    end
+    return lines
+  end
+  local nowG, maxG = gain(ValueAt(t, r)), gain(ValueAt(t, max))
+  if r < max then
+    local nextG = gain(ValueAt(t, r + 1)) - nowG
+    lines[#lines + 1] = ("Next point: %s%s"):format(fmt(nextG), withNow(nextG))
+    lines[#lines + 1] = ("At %d/%d: %s"):format(max, max, fmt(maxG))
+  else
+    lines[#lines + 1] = ("At %d/%d (now): %s"):format(max, max, fmt(maxG))
+  end
+  return lines
+end
+
+local function AddEffectToTooltip(tt, t)
+  local ok, lines = pcall(EffectLines, t)
+  if not ok then lines = nil end
+  if not lines or #lines == 0 then return end
+  tt:AddLine(" ")
+  tt:AddLine("Talent Scout - for you:", 0.4, 0.8, 1)
+  for _, l in ipairs(lines) do tt:AddLine(l, 0.3, 1, 0.3) end
+  tt:Show()
+end
+
+-- Whole-preset summary (stat talents at the preset's planned ranks, vs. no points)
+local PresetSummaryRaw
+local function PresetSummary(build)
+  local ok, parts = pcall(PresetSummaryRaw, build)
+  return ok and parts or {}
+end
+PresetSummaryRaw = function(build)
+  local counts = {}
+  for _, name in ipairs(ExpandOrder(build, cache.byName)) do counts[name] = (counts[name] or 0) + 1 end
+  local totals, order, fmts = {}, {}, {}
+  for name, n in pairs(counts) do
+    local t = cache.byName[name]
+    if t then
+      local kind, gain, fmt = Gainer(t)
+      if kind and not kind:find("^cd:") then
+        if not totals[kind] then totals[kind] = 0; order[#order + 1] = kind; fmts[kind] = fmt end
+        totals[kind] = totals[kind] + gain(ValueAt(t, math.min(n, t.max or n)))
+      end
+    end
+  end
+  table.sort(order)
+  local parts = {}
+  for _, k in ipairs(order) do parts[#parts + 1] = fmts[k](totals[k]) end
+  return parts
+end
+
 -- ---------- Finding the talent window ----------
 local function TalentsFrame()
   if PlayerSpellsFrame and PlayerSpellsFrame.TalentsFrame then return PlayerSpellsFrame.TalentsFrame, PlayerSpellsFrame end
@@ -244,6 +417,7 @@ local function GetOverlay(btn)
 end
 
 local LockReason, ValidSet, RuleError
+local tipHooked = {}
 local rec = nil          -- recording state: { steps = {}, role = "dps" }
 local captures = {}      -- talent button -> click catcher used while recording
 local strip              -- "coming up next" icon strip
@@ -340,6 +514,7 @@ local function GetCapture(btn, nodeID)
       local t = cache.byNode[self.nodeID]
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
       if t and t.spellID then GameTooltip:SetSpellByID(t.spellID) elseif t then GameTooltip:AddLine(t.name) end
+      if t then AddEffectToTooltip(GameTooltip, t) end
       if t and rec then
         local why = ((RecCounts()[t.name] or 0) == 0) and LockReason(t, RecCounts())
         if why then GameTooltip:AddLine(why, 1, 0.3, 0.3, true) end
@@ -420,6 +595,13 @@ UpdatePreview = function()
   local used, usedCap = {}, {}
   ForEachTalentButton(function(btn, nodeID)
     local t = cache.byNode[nodeID]
+    if not tipHooked[btn] then
+      tipHooked[btn] = true
+      btn:HookScript("OnEnter", function(self)
+        local id = ButtonNodeID(self)
+        if id and cache.byNode[id] and GameTooltip:IsOwned(self) then AddEffectToTooltip(GameTooltip, cache.byNode[id]) end
+      end)
+    end
     if rec and t and btn:IsShown() then
       local c = GetCapture(btn, nodeID); c:Show(); usedCap[c] = true
       c.lock:SetShown(((recCounts[t.name] or 0) == 0) and LockReason(t, recCounts) ~= nil)
@@ -591,6 +773,7 @@ local function ShowMenu(anchor, tab)
       menu.rows[k] = r
     end
     r:SetPoint("TOPLEFT", 8, -40 - (k - 1) * 26)
+    if item.record or item.clear then r:SetScript("OnEnter", nil); r:SetScript("OnLeave", nil) end
     if item.record then
       r.icon:SetTexture("Interface\\Buttons\\UI-PlusButton-Up"); r.text:SetText("New preset (record)"); r.check:Hide()
       r:SetScript("OnClick", function() menu:Hide(); StartRecording() end)
@@ -602,6 +785,18 @@ local function ShowMenu(anchor, tab)
       r.icon:SetTexture(ROLE_ICON[role])
       r.text:SetText((item.build.custom and "|cff66ccff*|r " or "") .. ROLE_LABEL[role] .. ": " .. item.build.name)
       r.check:SetShown(TalentScoutDB.preview and TalentScoutDB.build == item.idx)
+      r:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine(item.build.name)
+        local parts = PresetSummary(item.build)
+        if #parts > 0 then
+          GameTooltip:AddLine("Gives you (from your current stats):", 0.4, 0.8, 1)
+          for _, p in ipairs(parts) do GameTooltip:AddLine("  " .. p, 0.3, 1, 0.3) end
+        end
+        if item.build.custom then GameTooltip:AddLine("Shift-click to delete", 0.7, 0.7, 0.7) end
+        GameTooltip:Show()
+      end)
+      r:SetScript("OnLeave", function() GameTooltip:Hide() end)
       r:SetScript("OnClick", function()
         if item.build.custom and IsShiftKeyDown() then
           for ci, cb in ipairs(TalentScoutDB.custom or {}) do
@@ -708,6 +903,7 @@ local function HookTalentUI()
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
         if self.spellID then GameTooltip:SetSpellByID(self.spellID) else GameTooltip:AddLine(self.name or "?") end
         GameTooltip:AddLine(("Step %d: take it to rank %d"):format(i, self.to or 0), 0.3, 1, 0.3)
+        if self.name and cache.byName[self.name] then AddEffectToTooltip(GameTooltip, cache.byName[self.name]) end
         GameTooltip:Show()
       end)
       b:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -911,6 +1107,12 @@ SlashCmdList.TALENTSCOUT = function(msg)
     TalentScoutDB.showHit = not TalentScoutDB.showHit
     for _, h in ipairs(hitAreas) do h.debugTex:SetShown(TalentScoutDB.showHit) end
     Print("Click areas " .. (TalentScoutDB.showHit and "shown in red" or "hidden") .. " (" .. #hitAreas .. " found)")
+  elseif cmd == "summary" then
+    ReadTalents()
+    local b = CurrentBuild()
+    if not b then Print("No preset.") return end
+    local parts = PresetSummary(b)
+    Print(b.name .. " gives you: " .. (#parts > 0 and table.concat(parts, ", ") or "no stat talents"))
   elseif cmd == "record" then
     OpenTalents(); C_Timer.After(0.6, function() HookTalentUI(); StartRecording() end)
   elseif cmd == "dumpall" then
@@ -945,7 +1147,7 @@ SlashCmdList.TALENTSCOUT = function(msg)
     Remind(true)
     Print("Open your talents and left-click a spec to preview, right-click for presets.")
     Print("Something broken? Type /tsc debug")
-    Print("Commands: /tsc list | build <n> | role dps/tank/heal | hide | record | showhit | debug | dumpall | mouse | remind")
+    Print("Commands: /tsc list | build <n> | role dps/tank/heal | hide | record | summary | showhit | debug | dumpall | mouse | remind")
   end
 end
 
