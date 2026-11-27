@@ -84,21 +84,44 @@ local function ReadTalents()
     table.sort(subList)
     local subIndex = {}
     for i, id in ipairs(subList) do subIndex[id] = i end
-    local width = (maxX - minX); if width <= 0 then width = 1 end
+    -- Trees are columns of talents with wide gaps between them. Group x positions by those gaps;
+    -- the three biggest groups (left to right) are the trees. Hidden leftover talents far away are ignored.
+    local xs, seen = {}, {}
+    for _, t in ipairs(raw) do if not seen[t.x] then seen[t.x] = true; xs[#xs + 1] = t.x end end
+    table.sort(xs)
+    local groups = {}
+    for _, x in ipairs(xs) do
+      local g = groups[#groups]
+      if g and x - g.last <= 1500 then g.last = x; g[#g + 1] = x else groups[#groups + 1] = { x, first = x, last = x } end
+    end
+    for _, g in ipairs(groups) do
+      g.n = 0
+      for _, t in ipairs(raw) do if t.x >= g.first and t.x <= g.last then g.n = g.n + 1 end end
+    end
+    local keep = {}
+    for _, g in ipairs(groups) do if g.n >= 5 then keep[#keep + 1] = g end end
+    table.sort(keep, function(p, q) return p.first < q.first end)
+    local kept = {}
     for _, t in ipairs(raw) do
       if #treeIDs > 1 then t.tab = t.treeIndex
       elseif #subList > 1 and t.sub then t.tab = subIndex[t.sub]
-      else t.tab = math.min(3, math.floor((t.x - minX) / (width / 3 + 0.001)) + 1) end
-      byName[t.name] = t; byNode[t.nodeID] = t; count = count + 1
+      else
+        for i, g in ipairs(keep) do if t.x >= g.first and t.x <= g.last then t.tab = i end end
+      end
+      if t.tab then kept[#kept + 1] = t end
     end
     local minY = math.huge
-    for _, t in ipairs(raw) do minY = math.min(minY, t.y) end
-    for _, t in ipairs(raw) do
+    for _, t in ipairs(kept) do minY = math.min(minY, t.y) end
+    for _, t in ipairs(kept) do
       t.row = math.floor((t.y - minY) / 600 + 0.5) + 1
+      if t.row <= 7 then byName[t.name] = t; byNode[t.nodeID] = t; count = count + 1 end
+    end
+    -- An arrow only counts as a requirement when it comes from an earlier row.
+    for _, t in pairs(byNode) do
       t.requires = {}
       for _, pid in ipairs(prereqOf[t.nodeID] or {}) do
         local pt = byNode[pid]
-        if pt then table.insert(t.requires, pt.name) end
+        if pt and pt.row < t.row then table.insert(t.requires, pt.name) end
       end
     end
   end)
@@ -114,6 +137,8 @@ local function UnspentPoints()
 end
 
 local function MainTab(build, map)
+  -- A preset can say which spec icon it belongs to (tree = 1/2/3), so a renamed talent after a patch can't move it.
+  if build.tree then return build.tree end
   local per = {}
   for _, e in ipairs(build.order) do
     local name, n = Parse(e)
@@ -672,7 +697,9 @@ local function SaveRecording()
   local entries = {}
   for _, e in ipairs(order) do entries[#entries + 1] = e.name .. ":" .. e.n end
   TalentScoutDB.custom = TalentScoutDB.custom or {}
-  table.insert(TalentScoutDB.custom, { role = rec.role, name = name, order = entries, custom = true })
+  local newBuild = { role = rec.role, name = name, order = entries, custom = true }
+  newBuild.tree = MainTab(newBuild, cache.byName)
+  table.insert(TalentScoutDB.custom, newBuild)
   TalentScoutDB.build = #Builds(); TalentScoutDB.preview = true
   Print(("Saved preset |cff33ff33%s|r (%d points). Shift-click it in the right-click menu to delete it."):format(name, #rec.steps))
   StopRecording()
@@ -1037,8 +1064,10 @@ local function DumpTree(L, classFile, configID, treeID)
         if C_Traits.GetTraitDescription then local ok, d = pcall(C_Traits.GetTraitDescription, entryID, math.max(1, info.maxRanks or 1)); if ok then desc = d end end
         if (not desc or desc == "") and spellID and C_Spell and C_Spell.GetSpellDescription then local ok, d = pcall(C_Spell.GetSpellDescription, spellID); if ok then desc = d end end
         desc = tostring(desc or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("[\r\n]+", " ")
-        if #desc > 110 then desc = desc:sub(1, 110) .. "..." end
-        rows[#rows + 1] = { x = info.posX or 0, y = info.posY or 0, name = name, max = info.maxRanks or 0, desc = desc }
+        if #desc > 240 then desc = desc:sub(1, 240) .. "..." end
+        local targets = {}
+        for _, e in ipairs(info.visibleEdges or {}) do if e.targetNode then targets[#targets + 1] = e.targetNode end end
+        rows[#rows + 1] = { node = nodeID, targets = targets, x = info.posX or 0, y = info.posY or 0, name = name, max = info.maxRanks or 0, desc = desc }
         minX = math.min(minX, info.posX or 0); maxX = math.max(maxX, info.posX or 0)
       end
     end
@@ -1052,8 +1081,16 @@ local function DumpTree(L, classFile, configID, treeID)
   end
   table.sort(rows, function(a, c) if a.tab ~= c.tab then return a.tab < c.tab end if a.row ~= c.row then return a.row < c.row end return a.x < c.x end)
   local names = TREE_NAMES[classFile] or {}
+  local byNode, needs = {}, {}
+  for _, r in ipairs(rows) do byNode[r.node] = r end
   for _, r in ipairs(rows) do
-    L[#L + 1] = ("%s|%s|r%d|%s|%d|%s"):format(classFile, names[r.tab] or r.tab, r.row, r.name, r.max, r.desc)
+    for _, tn in ipairs(r.targets) do
+      if byNode[tn] then needs[tn] = needs[tn] or {}; table.insert(needs[tn], r.name) end
+    end
+  end
+  for _, r in ipairs(rows) do
+    local req = needs[r.node] and ("needs " .. table.concat(needs[r.node], "+")) or ""
+    L[#L + 1] = ("%s|%s|r%d|x%d|%s|%d|%s|%s"):format(classFile, names[r.tab] or r.tab, r.row, r.x, r.name, r.max, req, r.desc)
   end
   return #rows
 end
@@ -1082,7 +1119,9 @@ local function DumpAll()
     end)
     if not ok then L[#L + 1] = classFile .. ": ERROR " .. tostring(err) end
   end
+  TalentScoutDB.dump = { when = date("%Y-%m-%d %H:%M"), build = (GetBuildInfo()), buildNumber = select(2, GetBuildInfo()), lines = L }
   ShowDebugWindow(table.concat(L, "\n"))
+  Print(("Saved %d talent lines. Type /reload so they are written to disk."):format(#L))
 end
 
 local function OpenTalents()

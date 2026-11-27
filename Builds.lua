@@ -1,108 +1,53 @@
--- Talent Scout builds. Each entry: "Talent Name:ranks" in the order to take them.
--- Edit freely; /tscout check reports any names the game doesn't recognise.
+-- Talent Scout leveling builds for WoW Forever (patch 1.60.1, build 71139, after the Nov 25 2026 hotfixes).
+-- One preset per spec (Druid Feral has Cat + Bear). Based on community leveling guides: Icy Veins, Mobalytics
+-- and Method.gg (via Kami-Labs level-by-level ranges); Bear tank from RankedBoost.
+-- Each entry is "Talent Name:ranks" in the order you take them, one point per level from 10. tree = spec icon (1-3).
+-- Every build is checked against the game's own trees: 51 points, rows unlocked, arrow talents maxed first.
 TalentScout_Builds = {
   WARRIOR = {
-    { role = "dps", name = "Arms Leveling (31/20/0)", order = {
-      "Improved Heroic Strike:3","Deflection:2","Tactical Mastery:5","Anger Management:1","Deep Wounds:3",
-      "Improved Overpower:2","Two-Handed Weapon Specialization:5","Impale:2","Sweeping Strikes:1",
-      "Sword Specialization:5","Improved Hamstring:1","Mortal Strike:1",
-      "Cruelty:5","Unbridled Wrath:5","Piercing Howl:1","Blood Craze:3","Improved Cleave:1","Enrage:5" } },
-    { role = "tank", name = "Protection Tank (20/0/31)", order = {
-      "Shield Specialization:5","Toughness:5","Defiance:5","Improved Shield Block:3","Last Stand:1",
-      "Improved Sunder Armor:1","Concussion Blow:1","Improved Revenge:3","Anticipation:1",
-      "One-Handed Weapon Specialization:5","Shield Slam:1",
-      "Improved Heroic Strike:3","Tactical Mastery:5","Deflection:2","Anger Management:1","Deep Wounds:3",
-      "Improved Overpower:1","Improved Rend:3","Improved Thunder Clap:2" } },
-  },
-  MAGE = {
-    { role = "dps", name = "Frost Leveling (20/0/31)", order = {
-      "Improved Frostbolt:5","Ice Shards:5","Piercing Ice:3","Cold Snap:1","Improved Blizzard:1",
-      "Frost Channeling:3","Shatter:2","Ice Block:1","Improved Cone of Cold:3","Shatter:3",
-      "Elemental Precision:3","Ice Barrier:1",
-      "Arcane Subtlety:2","Arcane Focus:3","Arcane Concentration:5","Improved Arcane Explosion:3",
-      "Wand Specialization:2","Arcane Meditation:3","Arcane Focus:2" } },
-  },
-  ROGUE = {
-    { role = "dps", name = "Combat Swords (20/31/0)", order = {
-      "Improved Sinister Strike:2","Lightning Reflexes:3","Precision:5","Endurance:2","Riposte:1","Improved Gouge:2",
-      "Dual Wield Specialization:5","Lightning Reflexes:2","Blade Flurry:1","Sword Specialization:5",
-      "Weapon Expertise:2","Adrenaline Rush:1",
-      "Improved Eviscerate:3","Malice:5","Ruthlessness:3","Murder:2","Relentless Strikes:1","Lethality:5","Remorseless Attacks:1" } },
-  },
-  HUNTER = {
-    { role = "dps", name = "Beast Mastery Leveling (31/20/0)", order = {
-      "Improved Aspect of the Hawk:5","Endurance Training:5","Unleashed Fury:5","Ferocity:5",
-      "Bestial Swiftness:1","Intimidation:1","Bestial Discipline:2","Spirit Bond:1","Frenzy:5","Bestial Wrath:1",
-      "Efficiency:5","Lethal Shots:5","Aimed Shot:1","Hawk Eye:3","Improved Arcane Shot:1","Mortal Shots:5" } },
-  },
-  WARLOCK = {
-    { role = "dps", name = "Affliction Leveling (31/20/0)", order = {
-      "Improved Corruption:5","Improved Life Tap:2","Improved Drain Life:3","Improved Curse of Agony:3",
-      "Fel Concentration:2","Nightfall:2","Grim Reach:2","Fel Concentration:1","Siphon Life:1",
-      "Improved Drain Life:2","Fel Concentration:2","Shadow Mastery:5","Dark Pact:1",
-      "Demonic Embrace:5","Improved Voidwalker:3","Improved Imp:2","Fel Stamina:5","Fel Domination:1","Unholy Power:4" } },
-  },
-  PRIEST = {
-    { role = "dps", name = "Shadow Leveling (20/0/31)", order = {
-      "Spirit Tap:5","Improved Shadow Word: Pain:2","Shadow Focus:3","Mind Flay:1","Improved Mind Blast:4",
-      "Shadow Weaving:5","Vampiric Embrace:1","Improved Vampiric Embrace:2","Improved Mind Blast:1",
-      "Shadow Focus:1","Darkness:5","Shadowform:1",
-      "Wand Specialization:5","Improved Power Word: Shield:3","Martyrdom:2","Meditation:3","Inner Focus:1",
-      "Silent Resolve:1","Mental Agility:5" } },
-    { role = "heal", name = "Holy Healer (21/30/0)", order = {
-      "Healing Focus:2","Improved Renew:3","Divine Fury:5","Inspiration:3","Holy Nova:1","Blessed Recovery:1",
-      "Improved Healing:3","Holy Reach:2","Spiritual Guidance:5","Spiritual Healing:5",
-      "Wand Specialization:5","Improved Power Word: Shield:3","Martyrdom:2","Meditation:3","Inner Focus:1",
-      "Silent Resolve:1","Mental Agility:5","Divine Spirit:1" } },
+    { role = "dps", tree = 1, name = "Arms (32/19/0)", order = { "Improved Rend:3","Deflection:2","Improved Charge:2","Improved Overpower:2","Deflection:1","Deep Wounds:3","Deflection:2","Spearing Strike:1","Two-Handed Weapon Specialization:3","Impale:1","Sweeping Strikes:1","Bloodthrill:2","Impale:1","Weaponmaster:5","Improved Slam:1","Mortal Strike:1","Improved Slam:1","Cruelty:5","Unbridled Wrath:3","Unbridled Wrath:2","Enrage:5","Piercing Howl:1","Reckless Swings:1","Lingering Rage:2" } },
+    { role = "dps", tree = 2, name = "Fury (11/40/0)", order = { "Cruelty:5","Unbridled Wrath:5","Enrage:2","Blood Craze:3","Reckless Swings:1","Dual Wield Specialization:4","Death Wish:1","Gore Drinker:2","Dual Wield Specialization:1","Enrage:1","Flurry:3","Improved Whirlwind:2","Bloodthirst:1","Enrage:2","Furious Precision:3","Deflection:4","Improved Execute:2","Improved Berserker Rage:2","Deflection:1","Improved Overpower:2","Improved Tactical Mastery:3","Anger Management:1" } },
+    { role = "tank", tree = 3, name = "Protection Tank (5/15/31)", order = { "Shield Specialization:5","Improved Revenge:3","Improved Thunder Clap:2","Master of Defense:2","Last Stand:1","Improved Thunder Clap:1","Defiance:3","Vanguard:1","Improved Bloodrage:2","Concussion Blow:1","Focused Rage:3","Improved Shield Wall:1","Bastion:5","Shield Slam:1","Cruelty:5","Lingering Rage:4","Lingering Rage:1","Enrage:5","Improved Rend:3","Deflection:2" } },
   },
   PALADIN = {
-    -- WoW Forever Paladin trees (from /tsc debug, Nov 2026)
-    { role = "dps", name = "Retribution (12/8/31)", order = {
-      "Benediction:5","Conviction:3","Improved Judgement:2","Seal of Command:1","Pursuit of Justice:2",
-      "Vindication:2","Sacred Arbiter:1","Two-Handed Weapon Specialization:3","Eye for an Eye:1",
-      "Vengeance:3","Repentance:1","Sanctified Judgement:1","Champion of the Light:5","Unsealed Wrath:1",
-      "Divine Intellect:5","Precision:3",
-      "Divine Strength:5","Improved Seals:5","Holy Conduit:2" } },
-    { role = "heal", name = "Holy Healer (31/11/9)", order = {
-      "Spiritual Focus:5","Healing Light:3","Reverence:2","Illumination:5","Divine Favor:1",
-      "Infusion of Light:2","Oath of Light:1","Purifying Power:2","Holy Shock:1","Boundless Light:2",
-      "Holy Conduit:1","Holy Power:5","Light's Vigil:1",
-      "Divine Intellect:5","Sacred Duty:2","Guardian's Favor:2","Precision:1","Templar's Bulwark:1",
-      "Benediction:5","Sanctified Judgement:3","Conviction:1" } },
-    { role = "tank", name = "Protection Tank (10/31/10)", order = {
-      "Redoubt:5","Precision:3","Sacred Duty:2","Toughness:5","Improved Righteous Fury:3","Anticipation:2",
-      "Holy Shield:1","Shield Specialization:2","Templar's Bulwark:1","Reckoning:1","Iron Creed:3",
-      "Anticipation:2","Shieldsworn:1",
-      "Divine Strength:5","Improved Seals:5",
-      "Benediction:5","Improved Judgement:2","Conviction:3" } },
+    { role = "heal", tree = 1, name = "Holy Healer (34/5/12)", order = { "Benediction:5","Conviction:3","Improved Judgement:2","Spiritual Focus:5","Reverence:2","Healing Light:1","Pursuit of Justice:2","Healing Light:2","Illumination:5","Oath of Light:1","Infusion of Light:2","Holy Conduit:2","Holy Shock:1","Boundless Light:2","Divine Favor:1","Consecrated Ground:1","Holy Power:3","Holy Power:2","Light's Vigil:1","Consecrated Ground:1","Improved Seals:2","Divine Intellect:5" } },
+    { role = "tank", tree = 2, name = "Protection Tank (0/35/16)", order = { "Benediction:5","Conviction:3","Improved Judgement:2","Redoubt:5","Precision:3","Pursuit of Justice:2","Sacred Duty:2","Shield Specialization:2","Templar's Bulwark:1","Toughness:2","Swift Judgement:1","Improved Righteous Fury:2","Improved Righteous Fury:1","Anticipation:1","Holy Shield:1","Reckoning:5","Iron Creed:2","Iron Creed:1","Anticipation:4","Shieldsworn:1","Toughness:1","Sanctified Judgement:3","Sacred Arbiter:1" } },
+    { role = "dps", tree = 3, name = "Retribution (12/8/31)", order = { "Deflection:5","Conviction:3","Improved Judgement:2","Pursuit of Justice:2","Seal of Command:1","Sanctified Judgement:3","Two-Handed Weapon Specialization:3","Sacred Arbiter:1","Vengeance:3","Repentance:1","Benediction:1","Champion of the Light:5","Unsealed Wrath:1","Divine Strength:5","Reverence:2","Improved Seals:2","Improved Seals:3","Divine Intellect:5","Precision:3" } },
+  },
+  HUNTER = {
+    { role = "dps", tree = 1, name = "Beast Mastery (31/20/0)", order = { "Deadly Aspects:5","Focused Fire:2","Improved Revive Pet:2","Endurance Training:1","Pathfinding:2","Bestial Swiftness:1","Unleashed Fury:4","Summon Hawk:1","Ferocity:2","Intimidation:1","Bestial Discipline:2","Ferocity:3","Frenzy:4","Bestial Wrath:1","Lethal Attacks:5","Careful Aim:4","Careful Aim:1","Rapid Killing:2","Hawk Eye:3","Trueshot Aura:1","Mortal Shots:4" } },
+    { role = "dps", tree = 2, name = "Marksmanship (19/32/0)", order = { "Lethal Attacks:5","Careful Aim:5","Rapid Killing:2","Improved Stings:3","Trueshot Aura:1","Mortal Shots:4","Rapid Recuperation:2","Mortal Shots:1","Barrage:2","Ranged Weapon Specialization:5","Sniper Shot:1","Deadly Aspects:5","Focused Fire:2","Improved Revive Pet:2","Barrage:1","Endurance Training:1","Pathfinding:2","Bestial Swiftness:1","Unleashed Fury:5","Summon Hawk:1" } },
+    { role = "dps", tree = 3, name = "Survival (0/17/34)", order = { "Improved Tracking:5","Lethal Attacks:5","Savage Strikes:2","Survivalist:3","Surefooted:3","Clever Traps:2","Predator's Edge:5","Strider Kick:1","Expose Prey:2","Survivalist's Discipline:2","Lightning Reflexes:5","Lacerating Strikes:1","Resourcefulness:1","Survival Tactics:2","Careful Aim:1","Careful Aim:4","Lone Wolf:1","Improved Stings:3","Efficiency:1","Mortal Shots:2" } },
+  },
+  ROGUE = {
+    { role = "dps", tree = 1, name = "Assassination (34/12/5)", order = { "Remorseless Attacks:2","Malice:3","Improved Slice and Dice:3","Efficient Strikes:2","Malice:2","Vigor:2","Ruthlessness:3","Cold Blood:1","Improved Poisons:2","Improved Poisons:2","Venom:1","Relentless Strikes:4","Seal Fate:3","Relentless Strikes:1","Improved Poisons:1","Mutilate:1","Lightning Reflexes:3","Deflection:3","Precision:1","Vile Poisons:3","Precision:2","Riposte:1","Opportunity:5" } },
+    { role = "dps", tree = 2, name = "Combat (16/35/0)", order = { "Efficient Strikes:2","Coup de Grace:3","Deflection:3","Remorseless Attacks:2","Precision:3","Riposte:1","Endurance:2","Lightning Reflexes:1","Weapon Expertise:2","Aggression:1","Aggression:2","Blade Flurry:1","Dual Wield Specialization:2","Hack and Slash:2","Flash of Steel:3","Flash of Steel:2","Adrenaline Rush:1","Hack and Slash:3","Malice:3","Improved Slice and Dice:1","Flawless Execution:1","Improved Slice and Dice:2","Malice:2","Vigor:2","Blood Splatter:1","Lethality:2","Cold Blood:1" } },
+    { role = "dps", tree = 3, name = "Subtlety (6/14/31)", order = { "Setup:3","Opportunity:3","Dirty Deeds:2","Remorseless Attacks:2","Opportunity:2","Serrated Blades:3","Premeditation:1","Initiative:3","Ghostly Strike:1","Elusiveness:2","Hemorrhage:1","Preparation:1","Heightened Senses:2","Camouflage:1","Boot Knife:3","Boot Knife:2","Death Mark:1","Efficient Strikes:2","Coup de Grace:3","Deflection:2","Deflection:1","Precision:3","Riposte:1","Composure:2","Malice:3","Improved Slice and Dice:1" } },
+  },
+  PRIEST = {
+    { role = "heal", tree = 1, name = "Discipline Healer (33/13/5)", order = { "Wand Specialization:2","Spirit Tap:5","Twilight Focus:3","Power in Light:5","Mental Strength:3","Meditation:2","Meditation:1","Mental Strength:2","Improved Power Word: Shield:3","Soul Warding:1","Mental Agility:1","Penance:1","Renewed Hope:1","Renewed Hope:4","Divine Aegis:3","Mental Agility:1","Power Infusion:1","Holy Specialization:1","Mental Agility:1","Inner Focus:1","Holy Specialization:4","Divine Fury:5" } },
+    { role = "heal", tree = 2, name = "Holy Healer (14/32/5)", order = { "Twilight Focus:3","Wand Specialization:2","Spirit Tap:5","Improved Renew:3","Twin Disciplines:3","Mental Strength:4","Divine Fury:4","Holy Nova:1","Inspiration:1","Mental Strength:1","Meditation:3","Divine Fury:1","Holy Specialization:2","Searing Light:2","Improved Healing:3","Spirit of Redemption:1","Litany of Light:1","Litany of Light:1","Spiritual Guidance:5","Spiritual Healing:3","Prayer of Mending:1","Inner Focus:1" } },
+    { role = "dps", tree = 3, name = "Shadow (15/3/33)", order = { "Spirit Tap:5","Improved Shadow Word: Pain:2","Shadow Reach:1","Wand Specialization:2","Shadow Reach:1","Shadow Focus:3","Mind Flay:1","Improved Mind Flay:2","Vampiric Embrace:1","Shadow Weaving:2","Shadow Weaving:1","Shadow Focus:2","Silence:1","Devouring Contagion:2","Improved Mind Blast:1","Early Demise:2","Darkness:1","Darkness:4","Shadowform:1","Twilight Focus:3","Twin Disciplines:2","Twin Disciplines:3","Mental Strength:4","Meditation:3","Inner Focus:1" } },
   },
   SHAMAN = {
-    { role = "dps", name = "Enhancement Leveling (20/31/0)", order = {
-      "Ancestral Knowledge:5","Thundering Strikes:5","Two-Handed Axes and Maces:1","Improved Ghost Wolf:2",
-      "Enhancing Totems:2","Flurry:5","Elemental Weapons:3","Parry:1","Improved Weapon Totems:1",
-      "Weapon Mastery:5","Stormstrike:1",
-      "Concussion:5","Convection:5","Elemental Focus:1","Call of Thunder:5","Elemental Devastation:3","Reverberation:1" } },
-    { role = "heal", name = "Restoration Healer (0/20/31)", order = {
-      "Improved Healing Wave:5","Tidal Focus:5","Nature's Guidance:3","Healing Focus:2","Tidal Mastery:5",
-      "Nature's Swiftness:1","Healing Way:3","Healing Focus:1","Purification:5","Mana Tide Totem:1",
-      "Ancestral Knowledge:5","Thundering Strikes:5","Improved Ghost Wolf:2","Two-Handed Axes and Maces:1",
-      "Enhancing Totems:2","Flurry:5" } },
+    { role = "dps", tree = 1, name = "Elemental (33/7/11)", order = { "Concussion:5","Elemental Alacrity:3","Call of Flame:2","Elemental Focus:1","Call of Flame:1","Convection:3","Earthbound:1","Trial by Fire:2","Eye of the Storm:2","Call of Thunder:1","Lightning Overload:3","Eye of the Storm:1","Elemental Fury:5","Lightning Mastery:1","Tidal Focus:5","Mindfulness:3","Improved Reincarnation:1","Convection:2","Improved Reincarnation:1","Water Shield:1","Thundering Strikes:5","Ancestral Knowledge:2" } },
+    { role = "dps", tree = 2, name = "Enhancement (0/40/11)", order = { "Thundering Strikes:5","Mental Dexterity:3","Ancestral Knowledge:2","Shamanistic Focus:1","Elemental Weapons:3","Ancestral Knowledge:1","Stormstrike:1","Improved Ghost Wolf:2","Flurry:2","Improved Stormstrike:2","Tidal Focus:5","Mindfulness:3","Mental Quickness:2","Flurry:1","Maelstrom Weapon:4","Totemic Focus:2","Water Shield:1","Maelstrom Weapon:1","Rage of the Farseer:1","Spirit Weapons:1","Flurry:2","Ancestral Knowledge:2","Anticipation:3","Toughness:1" } },
+    { role = "heal", tree = 3, name = "Restoration Healer (0/10/41)", order = { "Tidal Focus:5","Mindfulness:3","Improved Healing Wave:2","Water Shield:1","Improved Healing Wave:3","Healing Focus:1","Mana Tide Totem:1","Tidal Mastery:4","Nature's Swiftness:1","Healing Way:3","Tidal Mastery:1","Purification:5","Riptide:1","Healing Focus:2","Ancestral Healing:3","Thundering Strikes:4","Restorative Totems:5","Thundering Strikes:1","Ancestral Knowledge:5" } },
+  },
+  MAGE = {
+    { role = "dps", tree = 1, name = "Arcane (36/12/3)", order = { "Improved Channeling:5","Missile Barrage:2","Arcane Subtlety:2","Arcane Concentration:1","Arcane Blast:1","Arcane Concentration:4","Arcane Wrath:1","Arcane Meditation:1","Precision:3","Arcane Meditation:2","Arcane Impact:1","Presence of Mind:1","Arcane Mind:4","Arcane Instability:2","Arcane Instability:1","Arcane Mind:1","Arcane Impact:2","Arcane Power:1","Incineration:5","Arcane Geometry:2","Magic Absorption:2","Accelerant:5","Improved Fire Blast:2" } },
+    { role = "dps", tree = 2, name = "Fire (17/31/3)", order = { "Accelerant:5","Ignite:2","Precision:3","Ignite:3","Pyroblast:1","Burning Soul:3","Improved Fire Blast:2","Heating Up:1","Master of Elements:3","Blast Wave:1","Critical Mass:3","Flame Throwing:1","Fire Power:2","Fire Power:1","Flame Throwing:1","Incineration:1","Combustion:1","Improved Channeling:5","Missile Barrage:1","Arcane Concentration:5","Missile Barrage:1","Arcane Subtlety:2","Arcane Blast:1","Arcane Meditation:2" } },
+    { role = "dps", tree = 3, name = "Frost (12/0/39)", order = { "Improved Frostbolt:5","Precision:3","Frostbite:2","Ice Lance:1","Ice Shards:5","Ice Block:1","Shatter:3","Fingers of Frost:2","Cold Snap:1","Improved Cone of Cold:2","Winter's Chill:5","Ice Barrier:1","Improved Cone of Cold:1","Frostbite:1","Frost Channeling:3","Improved Blizzard:3","Improved Channeling:1","Improved Channeling:4","Missile Barrage:1","Arcane Subtlety:2","Arcane Concentration:4" } },
+  },
+  WARLOCK = {
+    { role = "dps", tree = 1, name = "Affliction (40/0/11)", order = { "Improved Corruption:5","Suppression:4","Improved Drains:1","Improved Drains:2","Fel Concentration:3","Soul Harvest:2","Nightfall:2","Grim Reach:1","Siphon Life:1","Soul Siphon:3","Grim Reach:1","Shadow Mastery:5","Wrack:1","Improved Bane of Agony:2","Pandemic:3","Amplify Curse:1","Curse of Exhaustion:1","Malevolence:2","Improved Shadow Bolt:5","Bane:5","Shadowburn:1" } },
+    { role = "dps", tree = 2, name = "Demonology (20/31/0)", order = { "Unholy Power:5","Demonic Energies:2","Fel Vitality:2","Improved Corruption:1","Fel Vitality:1","Master Summoner:2","Improved Sayaad:3","Demonic Brand:3","Fel Domination:1","Demonic Sacrifice:1","Soul Link:1","Demonic Knowledge:3","Demonic Embrace:1","Master Demonologist:4","Master Demonologist:1","Demonic Pact:1","Improved Corruption:4","Suppression:4","Suppression:1","Pandemic:3","Improved Bane of Agony:2","Malevolence:5" } },
+    { role = "dps", tree = 3, name = "Destruction (12/6/33)", order = { "Bane:5","Aftermath:1","Suppression:4","Aftermath:4","Shadowburn:1","Ruin:4","Conflagrate:1","Ruin:1","Agonizing Flames:3","Fire and Brimstone:3","Bane of Havoc:1","Cataclysm:1","Shadow and Flame:1","Shadow and Flame:4","Incinerate:1","Cataclysm:2","Improved Corruption:3","Improved Corruption:2","Suppression:1","Improved Life Tap:2","Unholy Power:5","Demonic Energies:1" } },
   },
   DRUID = {
-    { role = "dps", name = "Feral Leveling (0/31/20)", order = {
-      "Ferocity:5","Feral Instinct:3","Brutal Impact:2","Sharpened Claws:3","Feline Swiftness:2",
-      "Predatory Strikes:3","Blood Frenzy:2","Faerie Fire (Feral):1","Savage Fury:2","Primal Fury:2",
-      "Heart of the Wild:5","Leader of the Pack:1",
-      "Furor:5","Improved Mark of the Wild:5","Improved Enrage:2","Reflection:3","Nature's Focus:5" } },
-    { role = "tank", name = "Bear Tank (0/31/20)", order = {
-      "Ferocity:5","Thick Hide:5","Sharpened Claws:3","Feral Charge:1","Feline Swiftness:1",
-      "Predatory Strikes:3","Primal Fury:2","Faerie Fire (Feral):1","Savage Fury:2","Feral Instinct:2",
-      "Heart of the Wild:5","Leader of the Pack:1",
-      "Furor:5","Improved Mark of the Wild:5","Improved Enrage:2","Reflection:3","Nature's Focus:5" } },
-    { role = "heal", name = "Restoration Healer (0/20/31)", order = {
-      "Furor:5","Improved Healing Touch:5","Reflection:3","Insect Swarm:1","Nature's Focus:1",
-      "Improved Rejuvenation:3","Tranquil Spirit:2","Nature's Swiftness:1","Gift of Nature:4",
-      "Improved Regrowth:5","Swiftmend:1",
-      "Ferocity:5","Thick Hide:5","Sharpened Claws:3","Feline Swiftness:2","Predatory Strikes:3","Blood Frenzy:2" } },
+    { role = "dps", tree = 1, name = "Balance (36/0/15)", order = { "Genesis:5","Starlight Wrath:2","Moonglow:3","Nature's Reach:2","Nature's Majesty:2","Nature's Splendor:1","Moon and Stars:2","Improved Entangling Roots:2","Insect Swarm:1","Improved Entangling Roots:1","Nature's Grace:1","Eclipse:3","Vengeance:5","Moonkin Form:1","Improved Starfire:2","Starlight Wrath:3","Nature's Focus:4","Nature's Focus:1","Naturalist:5","Reflection:3","Heart of the Wild:2" } },
+    { role = "dps", tree = 2, name = "Feral Cat (0/38/13)", order = { "Ferocity:5","Feral Swiftness:2","Thick Hide:3","Sharpened Claws:2","Savage Fury:2","Shredding Attacks:1","Furor:2","Predatory Strikes:3","Predatory Discipline:1","Shredding Attacks:2","Leader of the Pack:1","Natural Instinct:2","Furor:3","Rend and Tear:5","Shifting Power:1","Heart of the Wild:5","Naturalist:5","Brutal Impact:2","Feral Instinct:1","Natural Shapeshifter:3" } },
+    { role = "tank", tree = 2, name = "Bear Tank (0/41/10)", order = { "Furor:5","Ferocity:5","Feral Instinct:3","Sharpened Claws:2","Shredding Attacks:3","Savage Fury:2","Feral Charge:1","Predatory Strikes:3","Blood Frenzy:2","Lacerate:1","Leader of the Pack:1","Natural Instinct:2","Rend and Tear:5","Natural Reaction:5","Primal Bite:1","Heart of the Wild:5","Naturalist:5" } },
+    { role = "heal", tree = 3, name = "Restoration Healer (18/0/33)", order = { "Nature's Focus:5","Starlight Wrath:5","Reflection:3","Nature's Reach:2","Nature's Majesty:2","Moonglow:2","Nature's Splendor:1","Naturalist:5","Bloom:1","Moonglow:1","Genesis:2","Insect Swarm:1","Gift of Nature:5","Swiftmend:1","Nature's Swiftness:1","Living Spirit:3","Improved Rejuvenation:3","Improved Regrowth:5","Wild Growth:1","Genesis:2" } },
   },
 }

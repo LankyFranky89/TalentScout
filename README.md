@@ -17,7 +17,7 @@ A World of Warcraft (WoW Forever) addon that previews talent builds right in you
 - Hover a preset in the right-click menu for what the whole preset gives you (`/tsc summary`)
 - Reminder in chat when you level up with unspent points
 
-Presets are written for WoW Forever's own talent trees. Paladin is done; other classes still use classic-style presets and will be updated.
+Presets are written for WoW Forever's own talent trees (build 71139, after the November 25, 2026 hotfixes): one leveling preset for every spec of every class (28 in total, Druid Feral has Cat and Bear). They follow community leveling guides (Icy Veins, Mobalytics, Method.gg via Kami-Labs; Bear tank from RankedBoost) and every preset is checked point by point against the game's rules: rows, arrow requirements and max ranks.
 
 ## Install
 Download the latest release zip, put the `TalentScout` folder in `Interface\AddOns`, then `/reload`. Or get it through **Frank's Pack** in WoW Tinker Box.

@@ -2,7 +2,7 @@
 ## Title: Talent Scout
 ## Notes: Talent presets for WoW Forever: left-click a spec to preview a Damage, Tank or Healer build, right-click for presets or to record your own. /tsc
 ## Author: Frank
-## Version: 1.2.0
+## Version: 1.3.0
 ## SavedVariablesPerCharacter: TalentScoutDB
 
 Builds.lua
